@@ -26,8 +26,8 @@ DATA=${DATA:-'/opt/airpi/'}
 [ -d $DATA ] || mkdir -p $DATA
 
 # Process' binaries
-AIRMON=${AIRMONBIN:-which airmon-ng}
-AIRDMP=${AIRDMPBIN:-which airodump-ng}
+AIRMON=${AIRMONBIN:-`which airmon-ng`}
+AIRDMP=${AIRDMPBIN:-`which airodump-ng`}
 
 
 start() {

@@ -20,11 +20,8 @@
 # Source config if available.  Sane defaults otherwise.
 [ -e '/etc/macchange.conf' ] && . /etc/macchange.conf
 
-# Process' files
-PIDFILE='/var/run/macchange.pid'
-
-# Process' binaries
 MCHG=${MCHGBIN:-which macchanger}
+DEVICE=${DEVICE:-eth0} 2> /dev/null
 
 
 start() {
@@ -35,29 +32,40 @@ start() {
     exit 1
   fi
 
+  ip link show $DEVICE | grep $DEVICE
+  if [ $? != "0" ]; then
+    log_failure_msg " machchange: device $DEVICE does not appear to exist"
+  fi
 
+  ifdown $DEVICE
 
-  start-stop-daemon --pidfile $PIDFILE -m \
-  -b -d $DATA \
-  --start -x $MCHG -r \
-  
+  if [ -n $OUI ]; then
+    MAC=$OUI:`printf "%02X" $(( $RANDOM % 0xff ))`:`printf "%02X" $(( $RANDOM % 0xff ))`:`printf "%02X" $(( $RANDOM % 0xff ))`
+  fi 
 
-  log_success_msg "macchange: started successfully"
-  exit 0
+  $MCHG ${MAC:+-m $MAC} ${RANDOM:+-r} $DEVICE
+  if [ $? == '0' ]; then
+    ifup $DEVICE
+    log_success_msg "macchange: started successfully"
+    exit 0
+  else
+    log_failure_msg "macchange: failed to change mac"
+    exit 1
+  fi
 }
+
 
 stop() {
   log_daemon_msg "Stopping macchange daemon" "macchange"
+  $MCHG -p
 
-  start-stop-daemon --pidfile $PIDFILE \
-  --stop -x $MCHG \
-  --signal 9
-
-
-  rm -f $PIDFILE
-
-  log_success_msg "macchange: stopped"
-  exit 0
+  if [ $? == "0" ]; then
+    log_success_msg "macchange: stopped"
+    exit 0
+  else
+    log_failure_msg "macchange: failed to restore original mac"
+    exit 11
+  fi
 }
 
 case "$1" in

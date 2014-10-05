@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# On Debian, drop this file in /etc/network/if-pre-up.d/
+# to load chaos tables at boot.
+/sbin/iptables-restore < /etc/chaos-pi.rules
+

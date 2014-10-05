@@ -1,3 +1,12 @@
+Airpi: Automate tasks on Kali Linux 
+running on a Raspberry Pi.
+
+Installation:
+- Check the configuration values under ./etc
+- Copy files from ./etc to /etc
+- Copy files from ./init to /etc/init.d
+- Interact with services through the service command
+
 Feature Roadmap:
 
 Offensive:

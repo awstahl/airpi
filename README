@@ -1,0 +1,13 @@
+Feature Roadmap:
+
+Offensive:
+- Automated airdump-ng scanning - DONE - airpi service
+- Automated nmap'ing - IN PROGRESS - nmapper service
+- ARP Spoofing
+- DNS Proxy
+
+
+Defensive:
+- Chaos tables - IN PROGRESS - chaos-pi.rules
+- Automated macchanger - IN PROGRESS - macchange service
+- Honeypot(s)

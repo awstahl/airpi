@@ -10,14 +10,19 @@ Installation:
 Feature Roadmap:
 - Create something along the lines of this: http://lansec.net/product/reconbot/
 
-Offensive:
+Recon:
 - Automated airdump-ng scanning - DONE - airpi service
 - Automated nmap'ing - IN PROGRESS - nmapper service
-- ARP Spoofing
-- DNS Proxy
 
+Offensive (IANAL, but without a contract, these are a bad idea):
+- ARP Spoofing
+- DNS Spoofing
+- sslstrip if you're mean
+- hostile wifi if you're really mean
+- Spoofing spoofing...
 
 Defensive:
 - Chaos tables - IN PROGRESS - chaos-pi.rules
+-- sidenote: xtables didn't work on first try...
 - Automated macchanger - IN PROGRESS - macchange service
 - Honeypot(s)

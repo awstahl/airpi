@@ -27,7 +27,7 @@ Defensive:
 - Chaos tables - IN PROGRESS - chaos-pi.rules
 -- sidenote: xtables didn't work on first try...
 - Automated macchanger - IN PROGRESS - macchange service
-- Fuzzing - custom netcat services returning gibberish to confuse scanners
+- Fuzzing - custom netcat services broadcasting gibberish to confuse scanners
 - Honeypot(s) - identify admins and/or other attackers
 - sshd - move to high port, replace banner with fun
 - hostname - use a default device name (i.e. android-LG590Zxcv) to aid misdirection

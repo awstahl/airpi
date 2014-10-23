@@ -39,14 +39,14 @@ start() {
   fi
 
   $AIRMON | grep -iP "^mon[0-9]+"
-  if [ $? == "0" ]; then
+  if [ $? = 0 ]; then
     log_failure_msg "airpi: requires exclusive control of monitor mode"
     exit 2
   fi
 
-  $AIRMON start $DEVICE 
-  $AIRMON | grep -iP "^mon0" | grep -iP $DEVICE
-  if [ $? != "0" ]; then
+  $AIRMON start $DEVICE
+  $AIRMON | grep -iP "^mon0" 
+  if [ $? != 0 ]; then
     log_failure_msg "airpi: failed to start monitor mode on $DEVICE"
     exit 3
   fi

@@ -8,15 +8,26 @@ Installation:
 - Interact with services through the service command
 
 Feature Roadmap:
+- Create something along the lines of this: http://lansec.net/product/reconbot/
+- Current interface is sysadmin level; copy init & conf files
+-- detachable screen interface?
 
-Offensive:
+Passive Recon:
 - Automated airdump-ng scanning - DONE - airpi service
 - Automated nmap'ing - IN PROGRESS - nmapper service
-- ARP Spoofing
-- DNS Proxy
+- Transparent web proxy
 
+Active Recon:
+- ARP Spoofing
+- DNS Spoofing
+- sslstrip
+- hostile wifi
 
 Defensive:
 - Chaos tables - IN PROGRESS - chaos-pi.rules
+-- sidenote: xtables didn't work on first try...
 - Automated macchanger - IN PROGRESS - macchange service
-- Honeypot(s)
+- Fuzzing - custom netcat services broadcasting gibberish to confuse scanners
+- Honeypot(s) - identify admins and/or other attackers
+- sshd - move to high port, replace banner with fun
+- hostname - use a default device name (i.e. android-LG590Zxcv) to aid misdirection

@@ -26,8 +26,8 @@ Active Recon:
 Defensive:
 - Chaos tables - IN PROGRESS - chaos-pi.rules
 -- sidenote: xtables didn't work on first try...
-- Automated macchanger - IN PROGRESS - macchange service
+- Automated macchanger - DONE - macchange service
 - Fuzzing - custom netcat services broadcasting gibberish to confuse scanners
 - Honeypot(s) - identify admins and/or other attackers
-- sshd - move to high port, replace banner with fun
+- sshd - DONE - V1: move to high port, replace banner with fun
 - hostname - use a default device name (i.e. android-LG590Zxcv) to aid misdirection

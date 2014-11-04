@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          nmapper
-# Required-Start:    $local_fs
-# Required-Stop:     $local_fs
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Service to auto-launch nmap.
@@ -26,16 +26,41 @@ DATA=${DATA:-'/opt/nmapper/'}
 [ -d $DATA ] || mkdir -p $DATA
 
 # Process' binaries
-NMAP=${NMAPBIN:-which nmap}
+NMAP=${NMAPBIN:-`which nmap`}
 
+scan() {
+  case "$1" in
+    syn)
+      echo "sS"
+      ;;
+    *)
+      echo "sS"
+  esac
+}
+
+
+output() {
+  case "$1" in
+    xml)
+      echo "oX"
+      ;;
+    *)
+      echo "oN"
+  esac
+}
 
 start() {
-  log_daemon_msg "Starting nmapper daemon" "nmapper"
+  log_daemon_msg "Starting nmapper daemon in dir $DATA" "nmapper"
+  log_daemon_msg "Actually in dir: $(pwd)"
 
+  TARGET=`ip route | awk '$3 == "$DEVICE" {print $1}'`
 
   start-stop-daemon --pidfile $PIDFILE -m \
   -b -d $DATA \
   --start -x $NMAP \
+  -- -$(scan $SCAN) \
+  -$(output $OUTPUT) $PREFIX \
+  $TARGET
 
   log_success_msg "nmapper: started successfully"
   exit 0
@@ -47,7 +72,6 @@ stop() {
   start-stop-daemon --pidfile $PIDFILE \
   --stop -x $NMAP \
   --signal 9
-
 
   rm -f $PIDFILE
 

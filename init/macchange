@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ### BEGIN INIT INFO
 # Provides:          macchange
@@ -41,24 +41,22 @@ start() {
   ifdown $DEVICE
 
   if [ -n "$OUI" ]; then
-    echo $(( 1025 % 255 ))
-    #A=$(( $RANDOM % 255 ))
-    #B=$(( $RANDOM % 255 ))
-    #C=$(( $RANDOM % 255 ))
+    A=$((`od -vAn -N4 -tu4 < /dev/urandom`%255))
+    B=$((`od -vAn -N4 -tu4 < /dev/urandom`%255))
+    C=$((`od -vAn -N4 -tu4 < /dev/urandom`%255))
     MAC=$OUI:`printf "%02X" $A`:`printf "%02X" $B`:`printf "%02X" $C`
   fi 
 
   CHNG=`$MCHG ${MAC:+-m $MAC} ${RANDOM:+-r} $DEVICE`
   ifup $DEVICE
-  log_warning_msg "Changing mac gave: $CHNG"
-  log_warning_msg "Checking link status..."
-  ip add show $DEVICE
 
-  if [ $CHNG == 0 ]; then
+  echo $CHNG | grep -i "error"
+  if [ $? != 0 ]; then
     log_success_msg "macchange: started successfully"
     exit 0
   else
     log_failure_msg "macchange: unable to change mac"
+    log_failure_msg $CHNG
     exit 11
   fi
 }

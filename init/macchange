@@ -63,15 +63,38 @@ start() {
 
 
 stop() {
-  log_daemon_msg "Stopping macchange daemon" "macchange"
-  $MCHG -p $DEVICE
+  log_daemon_msg "Stopping macchange daemon..." "macchange"
+  local up
 
+  ip link show $DEVICE | grep "UP"
+  if [ $? = 0 ]
+  then
+    ifdown $DEVICE
+    up=true
+  fi
+
+  $MCHG -p $DEVICE
   if [ $? = 0 ]; then
-    log_success_msg "macchange: stopped"
-    exit 0
+    log_daemon_msg "macchange: restored original mac..."
   else
     log_failure_msg "macchange: failed to restore original mac"
     exit 11
+  fi
+
+  if [ -n "$up" ]
+  then
+    ifup $DEVICE
+  fi
+
+  ip link show $DEVICE | grep "UP"
+  if [ $? = 0 ]
+  then
+    log_daemon_msg "macchange: restored network..."
+    log_success_msg "macchange: all operation stopped."
+    exit 0
+  else
+    log_failure_msg "macchange: failed to restore network"
+    exit 12
   fi
 }
 
@@ -87,7 +110,7 @@ case "$1" in
     start
     ;;
   status)
-    status_of_proc -p $PIDFILE "$MCHG" macchange
+    $MCHG -s $DEVICE
     exit $?
     ;;
   *)

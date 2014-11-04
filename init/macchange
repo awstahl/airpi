@@ -4,10 +4,10 @@
 # Provides:          macchange
 # Required-Start:    $local_fs
 # Required-Stop:     $local_fs
-# X-Start-Before:    $network
-# X-Stop-After:      $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
+# X-Start-Before:    $network
+# X-Stop-After:      $network
 # Short-Description: Service to auto-launch nmap.
 # Description:       Service to auto-launch nmap. 
 #                    Starts default network and port scans every five minutes.
@@ -20,7 +20,7 @@
 # Source config if available.  Sane defaults otherwise.
 [ -e '/etc/macchange.conf' ] && . /etc/macchange.conf
 
-MCHG=${MCHGBIN:-which macchanger}
+MCHG=${MCHGBIN:-`which macchanger`}
 DEVICE=${DEVICE:-eth0} 2> /dev/null
 
 
@@ -32,34 +32,43 @@ start() {
     exit 1
   fi
 
-  ip link show $DEVICE | grep $DEVICE
-  if [ $? != "0" ]; then
+  ip link show $DEVICE | grep $DEVICE 2>&1 > /dev/null
+  if [ $? != 0 ]; then
     log_failure_msg " machchange: device $DEVICE does not appear to exist"
+    exit 2
   fi
 
   ifdown $DEVICE
 
-  if [ -n $OUI ]; then
-    MAC=$OUI:`printf "%02X" $(( $RANDOM % 0xff ))`:`printf "%02X" $(( $RANDOM % 0xff ))`:`printf "%02X" $(( $RANDOM % 0xff ))`
+  if [ -n "$OUI" ]; then
+    echo $(( 1025 % 255 ))
+    #A=$(( $RANDOM % 255 ))
+    #B=$(( $RANDOM % 255 ))
+    #C=$(( $RANDOM % 255 ))
+    MAC=$OUI:`printf "%02X" $A`:`printf "%02X" $B`:`printf "%02X" $C`
   fi 
 
-  $MCHG ${MAC:+-m $MAC} ${RANDOM:+-r} $DEVICE
-  if [ $? == '0' ]; then
-    ifup $DEVICE
+  CHNG=`$MCHG ${MAC:+-m $MAC} ${RANDOM:+-r} $DEVICE`
+  ifup $DEVICE
+  log_warning_msg "Changing mac gave: $CHNG"
+  log_warning_msg "Checking link status..."
+  ip add show $DEVICE
+
+  if [ $CHNG == 0 ]; then
     log_success_msg "macchange: started successfully"
     exit 0
   else
-    log_failure_msg "macchange: failed to change mac"
-    exit 1
+    log_failure_msg "macchange: unable to change mac"
+    exit 11
   fi
 }
 
 
 stop() {
   log_daemon_msg "Stopping macchange daemon" "macchange"
-  $MCHG -p
+  $MCHG -p $DEVICE
 
-  if [ $? == "0" ]; then
+  if [ $? = 0 ]; then
     log_success_msg "macchange: stopped"
     exit 0
   else

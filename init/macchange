@@ -23,11 +23,19 @@
 MCHG=${MCHGBIN:-`which macchanger`}
 DEVICE=${DEVICE:-eth0} 2> /dev/null
 
+binchk() {
+  if [ -n "$MCHG" -a -x "$MCHG" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 
 start() {
   log_daemon_msg "Starting macchange daemon" "macchange"
 
-  if [ -z $MCHG ]; then
+  if [ binchk ]; then
     log_failure_msg "macchange: unable to locate macchanger binary. Set MCHGBIN in /etc/macchange.conf"
     exit 1
   fi
@@ -40,7 +48,7 @@ start() {
 
   ifdown $DEVICE
 
-  if [ -n "$OUI" ]; then
+  if [ -n "$OUI" -a -z "$MAC" ]; then
     A=$((`od -vAn -N4 -tu4 < /dev/urandom`%255))
     B=$((`od -vAn -N4 -tu4 < /dev/urandom`%255))
     C=$((`od -vAn -N4 -tu4 < /dev/urandom`%255))
@@ -110,6 +118,10 @@ case "$1" in
     start
     ;;
   status)
+    if [ ! binchk ]; then
+      echo "No machchanger binary found."
+      exit 2
+    fi
     $MCHG -s $DEVICE
     exit $?
     ;;

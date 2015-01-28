@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Executes loop to perform nmap scans at regular intervals
+
+# Source config if available.  Sane defaults otherwise.
+[ -e '/etc/autonmap.conf' ] && . /etc/autonmap.conf
+
+
+#PREFIX=`date +%y%m%d%H%M`
+
+#[ -d $DATA ] || mkdir -p $DATA
+
+#TARGET=`ip route | awk '$3 = $DEVICE {print $1}'
+sleep 300
